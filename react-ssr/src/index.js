@@ -2,8 +2,6 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import DatePicker from "antd/es/date-picker";
 
-// const fs = require("fs");
-
 function App() {
   return (
     <div>
@@ -13,7 +11,5 @@ function App() {
 }
 
 const renderString = ReactDOMServer.renderToString(<App />);
-
-// const template = fs.readFileSync("./index.html", "utf8");
 
 console.log({ renderString });
