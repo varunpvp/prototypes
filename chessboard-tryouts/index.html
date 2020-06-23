@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        height: 100vh;
+      }
+
+      .container {
+        position: relative;
+      }
+
+      .drawing-layer {
+        height: 200px;
+        width: 200px;
+      }
+
+      .board {
+        position: absolute;
+        height: 200px;
+        width: 200px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .square {
+        flex: 1;
+        background-color: lightblue;
+        min-width: 12.5%;
+        border: solid 1px black;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="board"></div>
+      <div class="drawing-layer"></div>
+    </div>
+    <script>
+      let mouseDown = false;
+      let startX = 0;
+      let startY = 0;
+      let endX = 0;
+      let endY = 0;
+
+      const container = document.querySelector(".container");
+      const containerSize = container.clientWidth;
+      const squares = 8;
+      const squareSize = containerSize / squares;
+      const board = document.querySelector(".board");
+      const drawingLayer = document.querySelector(".drawing-layer");
+      const object = document.createElement("div");
+      drawingLayer.appendChild(object);
+
+      for (let i = 0; i < squares; i++) {
+        for (let j = 0; j < squares; j++) {
+          const square = document.createElement("div");
+          square.classList.add("square");
+          board.appendChild(square);
+        }
+      }
+
+      container.addEventListener("mousedown", (event) => {
+        const info = getMouseEventInfo(event);
+        const color = getColor(info);
+
+        mouseDown = true;
+        startX = round(info.layerX);
+        startY = round(info.layerY);
+
+        drawLine2(object, startX, startY, startX, startY, color);
+      });
+
+      container.addEventListener("mouseup", (event) => {
+        const info = getMouseEventInfo(event);
+        const color = getColor(info);
+
+        mouseDown = false;
+        endX = round(info.layerX);
+        endY = round(info.layerY);
+
+        drawLine2(object, startX, startY, endX, endY, color);
+
+        drawingLayer.appendChild(object.cloneNode());
+
+        object.style.width = 0;
+      });
+
+      container.addEventListener("mousemove", (event) => {
+        if (mouseDown) {
+          const info = getMouseEventInfo(event);
+          const color = getColor(info);
+
+          endX = round(info.layerX);
+          endY = round(info.layerY);
+
+          drawLine2(object, startX, startY, endX, endY, color);
+        }
+      });
+
+      container.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+      });
+
+      function round(value) {
+        const times = Math.floor(value / squareSize);
+        return times * squareSize + squareSize / 2;
+      }
+
+      function getColor(eventData) {
+        if (eventData.altKey) {
+          return "green";
+        } else if (eventData.shiftKey) {
+          return "red";
+        } else {
+          return "black";
+        }
+      }
+
+      function getMouseEventInfo(event) {
+        const {
+          which,
+          altKey,
+          shiftKey,
+          ctrlKey,
+          x,
+          y,
+          layerX,
+          layerY,
+        } = event;
+        return { which, altKey, shiftKey, ctrlKey, x, layerX, y, layerY };
+      }
+
+      function d(...any) {
+        if (false) {
+          console.log(...any);
+        }
+      }
+
+      function drawLine2(el, x1, y1, x2, y2, bgColor) {
+        distance = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+
+        xMid = (x1 + x2) / 2;
+        yMid = (y1 + y2) / 2;
+
+        salopeInRadian = Math.atan2(y1 - y2, x1 - x2);
+        salopeInDegrees = (salopeInRadian * 180) / Math.PI;
+
+        with (el.style) {
+          height = "1px";
+          backgroundColor = bgColor;
+          position = "absolute";
+          width = `${distance}px`;
+          top = `${yMid}px`;
+          left = `${xMid - distance / 2}px`;
+          transform = `rotate(${salopeInDegrees}deg)`;
+        }
+      }
+    </script>
+  </body>
+</html>
