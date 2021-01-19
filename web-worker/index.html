@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello world</title>
+  </head>
+  <body>
+    Hello world
+    <button onclick="sayHello()">Say hello</button>
+  </body>
+  <script>
+    const worker = new Worker("/worker.js");
+
+    worker.addEventListener("message", function () {
+      console.log("received worker message ack", { event });
+    });
+
+    function sayHello() {
+      worker.postMessage("hello");
+    }
+  </script>
+</html>
