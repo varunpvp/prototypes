@@ -1,4 +1,4 @@
-"use strict";const o=require("styled-components"),r=()=>o.button`
+"use strict";const o=require("styled-components"),r=o.button`
   border: none;
   border-radius: 0.5rem;
   background-color: #186faf;
